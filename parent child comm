@@ -1,0 +1,58 @@
+#define O_RDWR 2
+#define BUFFSIZE 4096
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
+#define SEEK_SET 0
+
+
+#include<fcntl.h>
+#include<stdio.h>
+#include<unistd.h>
+#include<string.h>
+#include<sys/wait.h>
+#include<stdlib.h>
+
+
+int main(void){
+int n;
+char buf[BUFFSIZE];
+int pid,len,i,sublen,k=0;
+char c[4096];
+
+
+int fd=open("/home/samridhi/cppractice/demo.txt",O_RDWR);
+if(fd<0){
+	printf("file opening error\n");}
+for(i=1;i<=2;i++){
+	printf("parent process\n");
+
+while ((n = read(STDIN_FILENO, buf, BUFFSIZE)) > 0)
+	if (write(fd, buf, n) != n)
+		printf("write error");
+if (n < 0)
+	printf("read error");
+if ((pid = fork()) < 0) {
+	printf("fork error\n");
+} else if (pid == 0) {
+	printf("child process\n");
+	while ((n = read(STDIN_FILENO, buf, BUFFSIZE)) > 0)
+		if (write(fd, buf, n) != n)
+			printf("write error");
+	if (n < 0)
+		printf("read error");
+	exit(0);
+}
+	 else {
+	 	int cpid =wait(NULL);
+	printf("The overall contents of the file are:\n");
+int seek=lseek(fd, 0, SEEK_SET);
+if(seek<0){
+	printf("lseek error");}
+while((n=read(fd,buf,BUFFSIZE))>0)
+	if(write(STDOUT_FILENO, buf, n)!=n)
+		printf("write error\n");
+if(n<0)
+	printf("read error\n");
+}
+}
+}
